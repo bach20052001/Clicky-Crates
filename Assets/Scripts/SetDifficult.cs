@@ -1,36 +1,34 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class SetDifficult : MonoBehaviour
 {
-    private GameManager manager;
-    void Start()
+    [SerializeField] private List<Button> levels = new List<Button>();
+
+    private void Start()
     {
-        manager = FindObjectOfType<GameManager>();
-        GetComponent<Button>().onClick.AddListener(SetUp);
+        for (int i = 0; i < levels.Count; i++)
+        {
+            int index = i;
+            levels[i].onClick.AddListener(delegate { OnClickHandler(index);});
+        }
     }
 
-    private void SetTime(float time)
+    private void OnClickHandler(int index)
     {
-        manager.SetInterval(time);
-    }
-    private void SetUp()
-    {
-        string level = gameObject.name;
-        switch (level)
+        switch (index)
         {
-            case "Easy":
-                SetTime(1);
+            case (int) Level.EASY:
+                this.PostEvent(GameEvent.OnClickLevelButton, Level.EASY);
                 break;
-            case "Medium":
-                SetTime(0.75f);
+            case (int) Level.NORMAL:
+                this.PostEvent(GameEvent.OnClickLevelButton, Level.NORMAL);
                 break;
-            case "Hard":
-                SetTime(0.5f);
-                break;
-            default:
+            case (int) Level.HARD:
+                this.PostEvent(GameEvent.OnClickLevelButton, Level.HARD);
                 break;
         }
-        manager.StartGame();
+        gameObject.SetActive(false);
     }
 }
